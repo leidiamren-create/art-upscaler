@@ -30,7 +30,7 @@ class OutputsOnlyAudit(unittest.TestCase):
     def run_batch(self,b=None):
         b=b or self.batch();b.start(self.settings());b._thread.join(10);self.assertFalse(b._thread.is_alive());return b,b.snapshot()
     def result_files(self,state):
-        p=Path(state['output']);return sorted(str(f.relative_to(p)) for f in p.rglob('*') if f.is_file())
+        p=Path(state['output']);return sorted(f.relative_to(p).as_posix() for f in p.rglob('*') if f.is_file())
     def assert_logs_separate(self,state):
         logs=Path(state['logs']);self.assertTrue(logs.is_dir());self.assertTrue(logs.is_relative_to(self.tool));self.assertFalse(logs.is_relative_to(Path(state['output'])))
         files=list(logs.rglob('*'));self.assertTrue(any(p.suffix=='.json' for p in files));self.assertTrue(any(p.suffix=='.csv' for p in files));self.assertFalse(any(p.suffix.lower()=='.png' for p in files))
